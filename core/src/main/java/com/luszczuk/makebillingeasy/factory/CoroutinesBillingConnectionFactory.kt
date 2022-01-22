@@ -23,50 +23,46 @@ class CoroutinesBillingConnectionFactory(
 
     override fun createBillingConnectionFlow(
         listener: PurchasesUpdatedListener
-    ): Flow<BillingConnectionResult> {
-        val flow = callbackFlow<BillingConnectionResult> {
+    ): Flow<BillingConnectionResult> = callbackFlow<BillingConnectionResult> {
+        val billingClient = billingClientFactory.createBillingClient(context, listener)
 
-            val billingClient = billingClientFactory.createBillingClient(context, listener)
+        billingClient.startConnection(object : BillingClientStateListener {
+            override fun onBillingServiceDisconnected() {
+                close(BillingServiceDisconnectedException())
+            }
 
-            billingClient.startConnection(object : BillingClientStateListener {
-                override fun onBillingServiceDisconnected() {
-                    close(BillingServiceDisconnectedException())
-                }
-
-                override fun onBillingSetupFinished(result: BillingResult) {
-                    val responseCode = result.responseCode
-                    if (isActive) {
-                        if (responseCode == BillingClient.BillingResponseCode.OK) {
-                            trySend(BillingConnectionResult.Success(billingClient))
-                        } else {
-                            close(BillingException.fromResult(result))
-                        }
+            override fun onBillingSetupFinished(result: BillingResult) {
+                if (isActive) {
+                    if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+                        trySend(BillingConnectionResult.Success(billingClient))
                     } else {
-                        if (billingClient.isReady) {
-                            billingClient.endConnection()
-                        }
+                        close(BillingException.fromResult(result))
                     }
-                }
-            })
-            awaitClose {
-                if (billingClient.isReady) {
-                    billingClient.endConnection()
+                } else {
+                    billingClient.endConnectionIfConnected()
                 }
             }
-        }.retryWhen { error, _ ->
-            error is BillingServiceDisconnectedException
-        }.catch { error ->
-            this.emit(
-                BillingConnectionResult.Error(
-                    exception = if (error is BillingException) {
-                        error
-                    } else {
-                        BillingException.UnknownException(BillingResult())
-                    }
-                )
-            )
+        })
+        awaitClose {
+            billingClient.endConnectionIfConnected()
         }
+    }.retryWhen { error, _ ->
+        error is BillingServiceDisconnectedException
+    }.catch { error ->
+        emit(convertExceptionIntoErrorResult(error))
+    }
 
-        return flow
+    private fun convertExceptionIntoErrorResult(error: Throwable) = BillingConnectionResult.Error(
+        exception = if (error is BillingException) {
+            error
+        } else {
+            BillingException.UnknownException(BillingResult())
+        }
+    )
+
+    private fun BillingClient.endConnectionIfConnected() {
+        if (isReady) {
+            endConnection()
+        }
     }
 }
