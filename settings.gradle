@@ -1,0 +1,3 @@
+rootProject.name='MakeBillingEasy'
+include ':sample'
+include ':core'
