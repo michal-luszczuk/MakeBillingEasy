@@ -12,6 +12,7 @@ buildscript {
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:${Versions.dokka}")
         classpath("com.vanniktech:gradle-maven-publish-plugin:0.18.0")
         classpath("de.mannodermaus.gradle.plugins:android-junit5:1.8.2.0")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:${Versions.dagger}")
     }
 }
 

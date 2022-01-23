@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -37,12 +38,26 @@ dependencies {
 
     implementation(Libs.kotlinStdLib)
 
+    implementation("androidx.activity:activity-ktx:1.4.0")
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("androidx.core:core-ktx:1.7.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.3")
 
+    implementation(Libs.billingLib)
+    implementation(Libs.lifecycleCommon)
+    implementation(Libs.lifecycleProcess)
+    implementation(Libs.lifecycleRuntime)
+    implementation(Libs.lifecycleViewModel)
+
+    implementation(project(":core"))
+    implementation(Libs.coroutinesAndroid)
+    implementation(Libs.coroutinesCore)
+
     implementation(Libs.dagger)
     kapt(Libs.daggerCompiler)
+
+    implementation(Libs.hiltAndroid)
+    kapt(Libs.hiltCompiler)
 
     testImplementation(Libs.junit)
     androidTestImplementation("androidx.test.ext:junit:1.1.3")

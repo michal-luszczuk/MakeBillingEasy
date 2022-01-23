@@ -12,7 +12,9 @@ class BillingConnectionLifecycleManager(
 
     private val job = SupervisorJob()
     override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
+        get() = job + Dispatchers.Main + CoroutineExceptionHandler { _, exception ->
+            // if you want to handle/log connection exceptions here
+        }
 
 
     override fun onStart(owner: LifecycleOwner) {

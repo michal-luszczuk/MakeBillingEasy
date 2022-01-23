@@ -22,7 +22,7 @@ android {
 
 dependencies {
     implementation(Libs.kotlinStdLib)
-    implementation("com.android.billingclient:billing-ktx:4.0.0")
+    implementation(Libs.billingLib)
     implementation(Libs.coroutinesAndroid)
     implementation(Libs.coroutinesCore)
     implementation(Libs.lifecycleCommon)

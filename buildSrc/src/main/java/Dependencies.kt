@@ -19,11 +19,12 @@ object Versions {
     const val dagger = "2.40.5"
     const val coroutines = "1.6.0"
     const val lifecycle = "2.4.0"
+    const val billingLib = "4.0.0"
 }
 
 object Libs {
     const val kotlinStdLib = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlinVersion}"
-
+    const val billingLib = "com.android.billingclient:billing-ktx:${Versions.billingLib}"
 
     const val junit = "junit:junit:${Versions.junit}"
     const val mockk = "io.mockk:mockk:${Versions.mockk}"
@@ -35,6 +36,9 @@ object Libs {
     const val dagger = "com.google.dagger:dagger:${Versions.dagger}"
     const val daggerCompiler = "com.google.dagger:dagger-compiler:${Versions.dagger}"
 
+    const val hiltAndroid = "com.google.dagger:hilt-android:${Versions.dagger}"
+    const val hiltCompiler = "com.google.dagger:hilt-android-compiler:${Versions.dagger}"
+
     const val coroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
     const val coroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
@@ -42,5 +46,7 @@ object Libs {
     const val lifecycleCommon = "androidx.lifecycle:lifecycle-common:${Versions.lifecycle}"
     const val lifecycleProcess = "androidx.lifecycle:lifecycle-process:${Versions.lifecycle}"
     const val lifecycleRuntime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
+    const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
+
 
 }

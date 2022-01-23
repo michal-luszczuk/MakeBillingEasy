@@ -3,8 +3,20 @@ package com.luszczuk.makebillingeasy
 import android.app.Activity
 import androidx.annotation.AnyThread
 import androidx.annotation.UiThread
-import com.android.billingclient.api.*
+import com.android.billingclient.api.AcknowledgePurchaseParams
+import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.FeatureType
+import com.android.billingclient.api.BillingFlowParams
+import com.android.billingclient.api.ConsumeParams
+import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.PurchaseHistoryRecord
+import com.android.billingclient.api.SkuDetails
+import com.android.billingclient.api.SkuDetailsParams
+import com.android.billingclient.api.acknowledgePurchase
+import com.android.billingclient.api.consumePurchase
+import com.android.billingclient.api.queryPurchaseHistory
+import com.android.billingclient.api.queryPurchasesAsync
+import com.android.billingclient.api.querySkuDetails
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -69,10 +81,12 @@ class EasyBillingRepository(
     }
 
     @AnyThread
-    override suspend fun consumeProduct(params: ConsumeParams) {
-        connectToClientAndCall { client ->
+    override suspend fun consumeProduct(params: ConsumeParams): String? {
+        return connectToClientAndCall { client ->
             val consumeResult = client.consumePurchase(params)
-            consumeResult.billingResult.throwIfNotSuccessful()
+            consumeResult.billingResult.callIfSuccessful {
+                consumeResult.purchaseToken
+            }
         }
     }
 
@@ -94,7 +108,7 @@ class EasyBillingRepository(
         }
     }
 
-    private suspend fun <X : Any> connectToClientAndCall(
+    private suspend fun <X : Any?> connectToClientAndCall(
         onSuccessfulConnection: suspend ((client: BillingClient) -> X)
     ): X {
         return when (val result = connectionFlowable.first()) {

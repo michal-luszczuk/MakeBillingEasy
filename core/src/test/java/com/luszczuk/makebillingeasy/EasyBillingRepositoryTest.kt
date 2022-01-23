@@ -1,15 +1,24 @@
 package com.luszczuk.makebillingeasy
 
+import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.BillingResponseCode
 import com.android.billingclient.api.BillingClient.FeatureType
 import com.android.billingclient.api.BillingClient.SkuType
+import com.android.billingclient.api.ConsumeParams
+import com.android.billingclient.api.ConsumeResult
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchaseHistoryRecord
 import com.android.billingclient.api.PurchaseHistoryResult
 import com.android.billingclient.api.PurchasesResult
+import com.android.billingclient.api.SkuDetails
+import com.android.billingclient.api.SkuDetailsParams
+import com.android.billingclient.api.SkuDetailsResult
+import com.android.billingclient.api.acknowledgePurchase
+import com.android.billingclient.api.consumePurchase
 import com.android.billingclient.api.queryPurchaseHistory
 import com.android.billingclient.api.queryPurchasesAsync
+import com.android.billingclient.api.querySkuDetails
 import com.luszczuk.makebillingeasy.BillingResultCreator.createBillingResult
 import com.luszczuk.makebillingeasy.exception.BillingException
 import io.mockk.coEvery
@@ -41,6 +50,8 @@ class EasyBillingRepositoryTest {
     private companion object {
         private const val BILLING_CLIENT_EXTENSION_FILE =
             "com.android.billingclient.api.BillingClientKotlinKt"
+
+        private const val EXAMPLE_PURCHASE_TOKEN = "exampleToken"
     }
 
     @MockK
@@ -205,9 +216,134 @@ class EasyBillingRepositoryTest {
             )
         }
 
+    @Test
+    fun `GIVEN client query sku details returns list with result ok WHEN getSkuDetails THEN list of details`() =
+        runTest {
+            //given
+            setStorageConnectionFlowToReturnFlowWithSuccess()
+            val params = mockk<SkuDetailsParams>()
+
+            val details = listOf<SkuDetails>(mockk(), mockk())
+            val result = SkuDetailsResult(
+                billingResult = createBillingResult(BillingResponseCode.OK),
+                skuDetailsList = details
+            )
+            coEvery { billingClient.querySkuDetails(params) } returns result
+
+            //when
+            val actualResult = repository.getSkuDetails(params)
+
+            //then
+            assertEquals(details, actualResult)
+        }
+
+    @Test
+    fun `GIVEN client query sku details returns item unavailable result WHEN getSkuDetails THEN item unavailable exception`() =
+        runTest {
+            //given
+            setStorageConnectionFlowToReturnFlowWithSuccess()
+            val params = mockk<SkuDetailsParams>()
+
+            val result = SkuDetailsResult(
+                billingResult = createBillingResult(BillingResponseCode.ITEM_UNAVAILABLE),
+                skuDetailsList = mockk()
+            )
+            coEvery { billingClient.querySkuDetails(params) } returns result
+
+            //when
+            val actualResult = kotlin.runCatching {
+                repository.getSkuDetails(params)
+            }
+
+            //then
+            assertInstanceOf(
+                BillingException.ItemUnavailableException::class.java,
+                actualResult.exceptionOrNull()
+            )
+        }
+
     private suspend fun setStorageConnectionFlowToReturnFlowWithSuccess() {
         val sharedFlow = MutableSharedFlow<BillingConnectionResult>(replay = 1)
         sharedFlow.emit(BillingConnectionResult.Success(billingClient))
         every { billingClientStorage.connectionFlow } returns sharedFlow
+    }
+
+    @Test
+    fun `GIVEN client consume purchase returns token with result ok WHEN consumeProduct THEN token`() =
+        runTest {
+            //given
+            setStorageConnectionFlowToReturnFlowWithSuccess()
+            val params = mockk<ConsumeParams>()
+
+            val result = ConsumeResult(
+                billingResult = createBillingResult(BillingResponseCode.OK),
+                purchaseToken = EXAMPLE_PURCHASE_TOKEN
+            )
+            coEvery { billingClient.consumePurchase(params) } returns result
+
+            //when
+            val actualResult = repository.consumeProduct(params)
+
+            //then
+            assertEquals(EXAMPLE_PURCHASE_TOKEN, actualResult)
+        }
+
+    @Test
+    fun `GIVEN client consume purchase returns item not owned result WHEN consumeProduct THEN item not owned exception`() =
+        runTest {
+            //given
+            setStorageConnectionFlowToReturnFlowWithSuccess()
+            val params = mockk<ConsumeParams>()
+
+            val result = ConsumeResult(
+                billingResult = createBillingResult(BillingResponseCode.ITEM_NOT_OWNED),
+                purchaseToken = EXAMPLE_PURCHASE_TOKEN
+            )
+            coEvery { billingClient.consumePurchase(params) } returns result
+
+            //when
+            val actualResult = kotlin.runCatching {
+                repository.consumeProduct(params)
+            }
+
+            //then
+            assertInstanceOf(
+                BillingException.ItemNotOwnedException::class.java,
+                actualResult.exceptionOrNull()
+            )
+        }
+
+    @Test
+    fun `GIVEN client returns result ok WHEN acknowledge THEN no exception`() = runTest {
+        //given
+        setStorageConnectionFlowToReturnFlowWithSuccess()
+        val params = mockk<AcknowledgePurchaseParams>()
+
+        val result = createBillingResult(BillingResponseCode.OK)
+        coEvery { billingClient.acknowledgePurchase(params) } returns result
+
+        //when
+        repository.acknowledge(params)
+    }
+
+    @Test
+    fun `GIVEN client returns result item not owned WHEN acknowledge THEN item not owned exception`() = runTest {
+        //given
+        setStorageConnectionFlowToReturnFlowWithSuccess()
+        val params = mockk<AcknowledgePurchaseParams>()
+
+        val result = createBillingResult(BillingResponseCode.ITEM_NOT_OWNED)
+        coEvery { billingClient.acknowledgePurchase(params) } returns result
+
+        //when
+        val actualResult = kotlin.runCatching {
+            repository.acknowledge(params)
+        }
+
+        //then
+        assertInstanceOf(
+            BillingException.ItemNotOwnedException::class.java,
+            actualResult.exceptionOrNull()
+        )
     }
 }
