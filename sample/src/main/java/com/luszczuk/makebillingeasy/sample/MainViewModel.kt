@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.QueryPurchasesParams
 import com.luszczuk.makebillingeasy.BillingRepository
 import com.luszczuk.makebillingeasy.exception.BillingException
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,8 @@ class MainViewModel @Inject constructor(
     fun onGetPurchasesPressed() {
         viewModelScope.launch {
             try {
-                val purchases = billingRepository.getPurchases(BillingClient.SkuType.SUBS)
+                val params = QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build()
+                val purchases = billingRepository.getPurchases(params)
                 purchases.forEach { purchase ->
                     Log.d("purchase", purchase.toString())
                     // do something with the purchase

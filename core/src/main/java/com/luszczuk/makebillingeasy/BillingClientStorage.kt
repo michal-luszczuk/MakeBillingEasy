@@ -4,7 +4,11 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.luszczuk.makebillingeasy.factory.BillingConnectionFactory
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.shareIn
 
 class BillingClientStorage(
     billingFactory: BillingConnectionFactory,
