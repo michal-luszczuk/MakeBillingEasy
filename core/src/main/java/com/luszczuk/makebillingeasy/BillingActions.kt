@@ -7,10 +7,12 @@ import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.ConsumeParams
+import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchaseHistoryRecord
-import com.android.billingclient.api.SkuDetails
-import com.android.billingclient.api.SkuDetailsParams
+import com.android.billingclient.api.QueryProductDetailsParams
+import com.android.billingclient.api.QueryPurchaseHistoryParams
+import com.android.billingclient.api.QueryPurchasesParams
 
 interface BillingActions {
 
@@ -18,13 +20,13 @@ interface BillingActions {
     suspend fun isFeatureSupported(@BillingClient.FeatureType feature: String): Boolean
 
     @AnyThread
-    suspend fun getPurchases(@BillingClient.SkuType skuType: String): List<Purchase>
+    suspend fun getPurchases(params: QueryPurchasesParams): List<Purchase>
 
     @AnyThread
-    suspend fun getPurchaseHistory(@BillingClient.SkuType skuType: String): List<PurchaseHistoryRecord>
+    suspend fun getPurchaseHistory(params: QueryPurchaseHistoryParams): List<PurchaseHistoryRecord>
 
     @AnyThread
-    suspend fun getSkuDetails(params: SkuDetailsParams): List<SkuDetails>
+    suspend fun getProductDetails(params: QueryProductDetailsParams): List<ProductDetails>
 
     @AnyThread
     suspend fun consumeProduct(params: ConsumeParams): String?

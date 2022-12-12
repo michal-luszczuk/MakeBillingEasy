@@ -4,21 +4,22 @@ import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.BillingResponseCode
 import com.android.billingclient.api.BillingClient.FeatureType
-import com.android.billingclient.api.BillingClient.SkuType
 import com.android.billingclient.api.ConsumeParams
 import com.android.billingclient.api.ConsumeResult
+import com.android.billingclient.api.ProductDetails
+import com.android.billingclient.api.ProductDetailsResult
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchaseHistoryRecord
 import com.android.billingclient.api.PurchaseHistoryResult
 import com.android.billingclient.api.PurchasesResult
-import com.android.billingclient.api.SkuDetails
-import com.android.billingclient.api.SkuDetailsParams
-import com.android.billingclient.api.SkuDetailsResult
+import com.android.billingclient.api.QueryProductDetailsParams
+import com.android.billingclient.api.QueryPurchaseHistoryParams
+import com.android.billingclient.api.QueryPurchasesParams
 import com.android.billingclient.api.acknowledgePurchase
 import com.android.billingclient.api.consumePurchase
+import com.android.billingclient.api.queryProductDetails
 import com.android.billingclient.api.queryPurchaseHistory
 import com.android.billingclient.api.queryPurchasesAsync
-import com.android.billingclient.api.querySkuDetails
 import com.luszczuk.makebillingeasy.BillingResultCreator.createBillingResult
 import com.luszczuk.makebillingeasy.exception.BillingException
 import io.mockk.coEvery
@@ -98,12 +99,12 @@ class EasyBillingRepositoryTest {
             //given
             setStorageConnectionFlowToReturnFlowWithSuccess()
             every {
-                billingClient.isFeatureSupported(FeatureType.IN_APP_ITEMS_ON_VR)
+                billingClient.isFeatureSupported(FeatureType.IN_APP_MESSAGING)
             } returns createBillingResult(BillingResponseCode.OK)
 
             //when
             val actualResult = repository.isFeatureSupported(
-                FeatureType.IN_APP_ITEMS_ON_VR
+                FeatureType.IN_APP_MESSAGING
             )
 
             //then
@@ -116,12 +117,12 @@ class EasyBillingRepositoryTest {
             //given
             setStorageConnectionFlowToReturnFlowWithSuccess()
             every {
-                billingClient.isFeatureSupported(FeatureType.IN_APP_ITEMS_ON_VR)
+                billingClient.isFeatureSupported(FeatureType.IN_APP_MESSAGING)
             } returns createBillingResult(BillingResponseCode.BILLING_UNAVAILABLE)
 
             //when
             val actualResult = repository.isFeatureSupported(
-                FeatureType.IN_APP_ITEMS_ON_VR
+                FeatureType.IN_APP_MESSAGING
             )
 
             //then
@@ -139,10 +140,11 @@ class EasyBillingRepositoryTest {
                 billingResult = createBillingResult(BillingResponseCode.OK),
                 purchasesList = purchases
             )
-            coEvery { billingClient.queryPurchasesAsync(SkuType.SUBS) } returns result
+            val params = mockk<QueryPurchasesParams>()
+            coEvery { billingClient.queryPurchasesAsync(params) } returns result
 
             //when
-            val actualResult = repository.getPurchases(SkuType.SUBS)
+            val actualResult = repository.getPurchases(params)
 
             //then
             assertEquals(purchases, actualResult)
@@ -157,11 +159,12 @@ class EasyBillingRepositoryTest {
                 billingResult = createBillingResult(BillingResponseCode.SERVICE_UNAVAILABLE),
                 purchasesList = mockk()
             )
-            coEvery { billingClient.queryPurchasesAsync(SkuType.SUBS) } returns purchaseResult
+            val params = mockk<QueryPurchasesParams>()
+            coEvery { billingClient.queryPurchasesAsync(params) } returns purchaseResult
 
             //when
             val actualResult = kotlin.runCatching {
-                repository.getPurchases(SkuType.SUBS)
+                repository.getPurchases(params)
             }
 
             //then
@@ -181,10 +184,11 @@ class EasyBillingRepositoryTest {
                 billingResult = createBillingResult(BillingResponseCode.OK),
                 purchaseHistoryRecordList = purchases
             )
-            coEvery { billingClient.queryPurchaseHistory(SkuType.SUBS) } returns result
+            val params = mockk<QueryPurchaseHistoryParams>()
+            coEvery { billingClient.queryPurchaseHistory(params) } returns result
 
             //when
-            val actualResult = repository.getPurchaseHistory(SkuType.SUBS)
+            val actualResult = repository.getPurchaseHistory(params)
 
             //then
             assertEquals(purchases, actualResult)
@@ -202,11 +206,12 @@ class EasyBillingRepositoryTest {
                 billingResult = createBillingResult(BillingResponseCode.SERVICE_TIMEOUT),
                 purchaseHistoryRecordList = historyRecords
             )
-            coEvery { billingClient.queryPurchaseHistory(SkuType.SUBS) } returns result
+            val params = mockk<QueryPurchaseHistoryParams>()
+            coEvery { billingClient.queryPurchaseHistory(params) } returns result
 
             //when
             val actualResult = kotlin.runCatching {
-                repository.getPurchaseHistory(SkuType.SUBS)
+                repository.getPurchaseHistory(params)
             }
 
             //then
@@ -217,42 +222,42 @@ class EasyBillingRepositoryTest {
         }
 
     @Test
-    fun `GIVEN client query sku details returns list with result ok WHEN getSkuDetails THEN list of details`() =
+    fun `GIVEN client query product details returns list with result ok WHEN getProductDetails THEN list of details`() =
         runTest {
             //given
             setStorageConnectionFlowToReturnFlowWithSuccess()
-            val params = mockk<SkuDetailsParams>()
+            val params = mockk<QueryProductDetailsParams>()
 
-            val details = listOf<SkuDetails>(mockk(), mockk())
-            val result = SkuDetailsResult(
+            val details = listOf<ProductDetails>(mockk(), mockk())
+            val result = ProductDetailsResult(
                 billingResult = createBillingResult(BillingResponseCode.OK),
-                skuDetailsList = details
+                productDetailsList = details
             )
-            coEvery { billingClient.querySkuDetails(params) } returns result
+            coEvery { billingClient.queryProductDetails(params) } returns result
 
             //when
-            val actualResult = repository.getSkuDetails(params)
+            val actualResult = repository.getProductDetails(params)
 
             //then
             assertEquals(details, actualResult)
         }
 
     @Test
-    fun `GIVEN client query sku details returns item unavailable result WHEN getSkuDetails THEN item unavailable exception`() =
+    fun `GIVEN client query product details returns item unavailable result WHEN getProductDetails THEN item unavailable exception`() =
         runTest {
             //given
             setStorageConnectionFlowToReturnFlowWithSuccess()
-            val params = mockk<SkuDetailsParams>()
+            val params = mockk<QueryProductDetailsParams>()
 
-            val result = SkuDetailsResult(
+            val result = ProductDetailsResult(
                 billingResult = createBillingResult(BillingResponseCode.ITEM_UNAVAILABLE),
-                skuDetailsList = mockk()
+                productDetailsList = mockk()
             )
-            coEvery { billingClient.querySkuDetails(params) } returns result
+            coEvery { billingClient.queryProductDetails(params) } returns result
 
             //when
             val actualResult = kotlin.runCatching {
-                repository.getSkuDetails(params)
+                repository.getProductDetails(params)
             }
 
             //then

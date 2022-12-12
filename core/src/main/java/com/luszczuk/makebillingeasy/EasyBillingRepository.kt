@@ -8,15 +8,17 @@ import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.FeatureType
 import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.ConsumeParams
+import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchaseHistoryRecord
-import com.android.billingclient.api.SkuDetails
-import com.android.billingclient.api.SkuDetailsParams
+import com.android.billingclient.api.QueryProductDetailsParams
+import com.android.billingclient.api.QueryPurchaseHistoryParams
+import com.android.billingclient.api.QueryPurchasesParams
 import com.android.billingclient.api.acknowledgePurchase
 import com.android.billingclient.api.consumePurchase
+import com.android.billingclient.api.queryProductDetails
 import com.android.billingclient.api.queryPurchaseHistory
 import com.android.billingclient.api.queryPurchasesAsync
-import com.android.billingclient.api.querySkuDetails
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -51,9 +53,9 @@ class EasyBillingRepository(
     }
 
     @AnyThread
-    override suspend fun getPurchases(@BillingClient.SkuType skuType: String): List<Purchase> {
+    override suspend fun getPurchases(params: QueryPurchasesParams): List<Purchase> {
         return connectToClientAndCall { client ->
-            val purchasesResult = client.queryPurchasesAsync(skuType)
+            val purchasesResult = client.queryPurchasesAsync(params)
             purchasesResult.billingResult.callIfSuccessful {
                 purchasesResult.purchasesList
             }
@@ -61,9 +63,9 @@ class EasyBillingRepository(
     }
 
     @AnyThread
-    override suspend fun getPurchaseHistory(@BillingClient.SkuType skuType: String): List<PurchaseHistoryRecord> {
+    override suspend fun getPurchaseHistory(params: QueryPurchaseHistoryParams): List<PurchaseHistoryRecord> {
         return connectToClientAndCall { client ->
-            val purchasesHistoryResult = client.queryPurchaseHistory(skuType)
+            val purchasesHistoryResult = client.queryPurchaseHistory(params)
             purchasesHistoryResult.billingResult.callIfSuccessful {
                 purchasesHistoryResult.purchaseHistoryRecordList.orEmpty()
             }
@@ -71,11 +73,11 @@ class EasyBillingRepository(
     }
 
     @AnyThread
-    override suspend fun getSkuDetails(params: SkuDetailsParams): List<SkuDetails> {
+    override suspend fun getProductDetails(params: QueryProductDetailsParams): List<ProductDetails> {
         return connectToClientAndCall { client ->
-            val skuDetailsResult = client.querySkuDetails(params)
-            skuDetailsResult.billingResult.callIfSuccessful {
-                skuDetailsResult.skuDetailsList.orEmpty()
+            val productDetailsResult = client.queryProductDetails(params)
+            productDetailsResult.billingResult.callIfSuccessful {
+                productDetailsResult.productDetailsList.orEmpty()
             }
         }
     }
