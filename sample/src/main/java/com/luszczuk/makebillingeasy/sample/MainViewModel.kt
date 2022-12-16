@@ -20,7 +20,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val params = QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build()
-                val purchases = billingRepository.getPurchases(params)
+                val purchases = billingRepository.queryPurchases(params)
                 purchases.forEach { purchase ->
                     Log.d("purchase", purchase.toString())
                     // do something with the purchase

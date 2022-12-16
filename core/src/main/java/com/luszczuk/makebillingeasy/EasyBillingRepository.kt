@@ -53,7 +53,7 @@ class EasyBillingRepository(
     }
 
     @AnyThread
-    override suspend fun getPurchases(params: QueryPurchasesParams): List<Purchase> {
+    override suspend fun queryPurchases(params: QueryPurchasesParams): List<Purchase> {
         return connectToClientAndCall { client ->
             val purchasesResult = client.queryPurchasesAsync(params)
             purchasesResult.billingResult.callIfSuccessful {
@@ -63,7 +63,7 @@ class EasyBillingRepository(
     }
 
     @AnyThread
-    override suspend fun getPurchaseHistory(params: QueryPurchaseHistoryParams): List<PurchaseHistoryRecord> {
+    override suspend fun queryPurchaseHistory(params: QueryPurchaseHistoryParams): List<PurchaseHistoryRecord> {
         return connectToClientAndCall { client ->
             val purchasesHistoryResult = client.queryPurchaseHistory(params)
             purchasesHistoryResult.billingResult.callIfSuccessful {
@@ -73,7 +73,7 @@ class EasyBillingRepository(
     }
 
     @AnyThread
-    override suspend fun getProductDetails(params: QueryProductDetailsParams): List<ProductDetails> {
+    override suspend fun queryProductDetails(params: QueryProductDetailsParams): List<ProductDetails> {
         return connectToClientAndCall { client ->
             val productDetailsResult = client.queryProductDetails(params)
             productDetailsResult.billingResult.callIfSuccessful {
@@ -83,7 +83,7 @@ class EasyBillingRepository(
     }
 
     @AnyThread
-    override suspend fun consumeProduct(params: ConsumeParams): String? {
+    override suspend fun consumePurchase(params: ConsumeParams): String? {
         return connectToClientAndCall { client ->
             val consumeResult = client.consumePurchase(params)
             consumeResult.billingResult.callIfSuccessful {
@@ -93,7 +93,7 @@ class EasyBillingRepository(
     }
 
     @AnyThread
-    override suspend fun acknowledge(params: AcknowledgePurchaseParams) {
+    override suspend fun acknowledgePurchase(params: AcknowledgePurchaseParams) {
         connectToClientAndCall { client ->
             val acknowledgeResult = client.acknowledgePurchase(params)
             acknowledgeResult.throwIfNotSuccessful()

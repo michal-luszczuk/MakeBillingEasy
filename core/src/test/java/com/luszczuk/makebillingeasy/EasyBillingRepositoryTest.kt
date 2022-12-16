@@ -130,7 +130,7 @@ class EasyBillingRepositoryTest {
         }
 
     @Test
-    fun `GIVEN client query purchases async returns ok result with purchases WHEN getPurchases THEN purchases`() =
+    fun `GIVEN client query purchases async returns ok result with purchases WHEN queryPurchases THEN purchases`() =
         runTest {
             //given
             setStorageConnectionFlowToReturnFlowWithSuccess()
@@ -144,14 +144,14 @@ class EasyBillingRepositoryTest {
             coEvery { billingClient.queryPurchasesAsync(params) } returns result
 
             //when
-            val actualResult = repository.getPurchases(params)
+            val actualResult = repository.queryPurchases(params)
 
             //then
             assertEquals(purchases, actualResult)
         }
 
     @Test
-    fun `GIVEN client query purchases async returns service unavailable WHEN getPurchases THEN exception`() =
+    fun `GIVEN client query purchases async returns service unavailable WHEN queryPurchases THEN exception`() =
         runTest {
             //given
             setStorageConnectionFlowToReturnFlowWithSuccess()
@@ -164,7 +164,7 @@ class EasyBillingRepositoryTest {
 
             //when
             val actualResult = kotlin.runCatching {
-                repository.getPurchases(params)
+                repository.queryPurchases(params)
             }
 
             //then
@@ -175,7 +175,7 @@ class EasyBillingRepositoryTest {
         }
 
     @Test
-    fun `GIVEN client query purchase history returns ok result with history records WHEN getPurchaseHistory THEN history records`() =
+    fun `GIVEN client query purchase history returns ok result with history records WHEN queryPurchaseHistory THEN history records`() =
         runTest {
             //given
             setStorageConnectionFlowToReturnFlowWithSuccess()
@@ -188,7 +188,7 @@ class EasyBillingRepositoryTest {
             coEvery { billingClient.queryPurchaseHistory(params) } returns result
 
             //when
-            val actualResult = repository.getPurchaseHistory(params)
+            val actualResult = repository.queryPurchaseHistory(params)
 
             //then
             assertEquals(purchases, actualResult)
@@ -196,7 +196,7 @@ class EasyBillingRepositoryTest {
 
 
     @Test
-    fun `GIVEN client query purchases history returns service timeout WHEN getPurchaseHistory THEN timeout exception`() =
+    fun `GIVEN client query purchases history returns service timeout WHEN queryPurchaseHistory THEN timeout exception`() =
         runTest {
             //given
             setStorageConnectionFlowToReturnFlowWithSuccess()
@@ -211,7 +211,7 @@ class EasyBillingRepositoryTest {
 
             //when
             val actualResult = kotlin.runCatching {
-                repository.getPurchaseHistory(params)
+                repository.queryPurchaseHistory(params)
             }
 
             //then
@@ -222,7 +222,7 @@ class EasyBillingRepositoryTest {
         }
 
     @Test
-    fun `GIVEN client query product details returns list with result ok WHEN getProductDetails THEN list of details`() =
+    fun `GIVEN client query product details returns list with result ok WHEN queryProductDetails THEN list of details`() =
         runTest {
             //given
             setStorageConnectionFlowToReturnFlowWithSuccess()
@@ -236,14 +236,14 @@ class EasyBillingRepositoryTest {
             coEvery { billingClient.queryProductDetails(params) } returns result
 
             //when
-            val actualResult = repository.getProductDetails(params)
+            val actualResult = repository.queryProductDetails(params)
 
             //then
             assertEquals(details, actualResult)
         }
 
     @Test
-    fun `GIVEN client query product details returns item unavailable result WHEN getProductDetails THEN item unavailable exception`() =
+    fun `GIVEN client query product details returns item unavailable result WHEN queryProductDetails THEN item unavailable exception`() =
         runTest {
             //given
             setStorageConnectionFlowToReturnFlowWithSuccess()
@@ -257,7 +257,7 @@ class EasyBillingRepositoryTest {
 
             //when
             val actualResult = kotlin.runCatching {
-                repository.getProductDetails(params)
+                repository.queryProductDetails(params)
             }
 
             //then
@@ -274,7 +274,7 @@ class EasyBillingRepositoryTest {
     }
 
     @Test
-    fun `GIVEN client consume purchase returns token with result ok WHEN consumeProduct THEN token`() =
+    fun `GIVEN client consume purchase returns token with result ok WHEN consumePurchase THEN token`() =
         runTest {
             //given
             setStorageConnectionFlowToReturnFlowWithSuccess()
@@ -287,14 +287,14 @@ class EasyBillingRepositoryTest {
             coEvery { billingClient.consumePurchase(params) } returns result
 
             //when
-            val actualResult = repository.consumeProduct(params)
+            val actualResult = repository.consumePurchase(params)
 
             //then
             assertEquals(EXAMPLE_PURCHASE_TOKEN, actualResult)
         }
 
     @Test
-    fun `GIVEN client consume purchase returns item not owned result WHEN consumeProduct THEN item not owned exception`() =
+    fun `GIVEN client consume purchase returns item not owned result WHEN consumePurchase THEN item not owned exception`() =
         runTest {
             //given
             setStorageConnectionFlowToReturnFlowWithSuccess()
@@ -308,7 +308,7 @@ class EasyBillingRepositoryTest {
 
             //when
             val actualResult = kotlin.runCatching {
-                repository.consumeProduct(params)
+                repository.consumePurchase(params)
             }
 
             //then
@@ -319,7 +319,7 @@ class EasyBillingRepositoryTest {
         }
 
     @Test
-    fun `GIVEN client returns result ok WHEN acknowledge THEN no exception`() = runTest {
+    fun `GIVEN client returns result ok WHEN acknowledgePurchase THEN no exception`() = runTest {
         //given
         setStorageConnectionFlowToReturnFlowWithSuccess()
         val params = mockk<AcknowledgePurchaseParams>()
@@ -328,11 +328,11 @@ class EasyBillingRepositoryTest {
         coEvery { billingClient.acknowledgePurchase(params) } returns result
 
         //when
-        repository.acknowledge(params)
+        repository.acknowledgePurchase(params)
     }
 
     @Test
-    fun `GIVEN client returns result item not owned WHEN acknowledge THEN item not owned exception`() = runTest {
+    fun `GIVEN client returns result item not owned WHEN acknowledgePurchase THEN item not owned exception`() = runTest {
         //given
         setStorageConnectionFlowToReturnFlowWithSuccess()
         val params = mockk<AcknowledgePurchaseParams>()
@@ -342,7 +342,7 @@ class EasyBillingRepositoryTest {
 
         //when
         val actualResult = kotlin.runCatching {
-            repository.acknowledge(params)
+            repository.acknowledgePurchase(params)
         }
 
         //then
