@@ -1,12 +1,9 @@
 package com.luszczuk.makebillingeasy.sample.injection
 
 import android.app.Application
-import com.luszczuk.makebillingeasy.BillingClientStorage
 import com.luszczuk.makebillingeasy.BillingConnector
 import com.luszczuk.makebillingeasy.BillingRepository
-import com.luszczuk.makebillingeasy.EasyBillingRepository
-import com.luszczuk.makebillingeasy.factory.BillingConnectionFactory
-import com.luszczuk.makebillingeasy.factory.CoroutinesBillingConnectionFactory
+import com.luszczuk.makebillingeasy.DefaultEasyBillingRepositoryCreator
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -21,27 +18,13 @@ abstract class EasyBillingModule {
     companion object {
 
         @Provides
-        fun provideCoroutinesBillingClientFactory(
-            applicationContext: Application
-        ): BillingConnectionFactory {
-            return CoroutinesBillingConnectionFactory(applicationContext)
-        }
-
-        @Provides
         @Singleton
-        fun provideBillingClientStorage(factory: BillingConnectionFactory): BillingClientStorage {
-            return BillingClientStorage(factory)
-        }
-
-        @Provides
-        @Singleton
-        fun provideCoroutineBilling(billingClientStorage: BillingClientStorage): BillingRepository {
-            return EasyBillingRepository(billingClientStorage)
+        fun provideBillingRepository(applicationContext: Application): BillingRepository {
+            return DefaultEasyBillingRepositoryCreator.createBillingRepository(applicationContext)
         }
     }
 
     @Binds
     abstract fun provideCoroutineBilling(billingRepository: BillingRepository): BillingConnector
-
 
 }

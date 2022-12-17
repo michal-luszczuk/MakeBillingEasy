@@ -20,19 +20,19 @@ interface BillingActions {
     suspend fun isFeatureSupported(@BillingClient.FeatureType feature: String): Boolean
 
     @AnyThread
-    suspend fun getPurchases(params: QueryPurchasesParams): List<Purchase>
+    suspend fun queryPurchases(params: QueryPurchasesParams): List<Purchase>
 
     @AnyThread
-    suspend fun getPurchaseHistory(params: QueryPurchaseHistoryParams): List<PurchaseHistoryRecord>
+    suspend fun queryPurchaseHistory(params: QueryPurchaseHistoryParams): List<PurchaseHistoryRecord>
 
     @AnyThread
-    suspend fun getProductDetails(params: QueryProductDetailsParams): List<ProductDetails>
+    suspend fun queryProductDetails(params: QueryProductDetailsParams): List<ProductDetails>
 
     @AnyThread
-    suspend fun consumeProduct(params: ConsumeParams): String?
+    suspend fun consumePurchase(params: ConsumeParams): String?
 
     @AnyThread
-    suspend fun acknowledge(params: AcknowledgePurchaseParams)
+    suspend fun acknowledgePurchase(params: AcknowledgePurchaseParams)
 
     @MainThread
     suspend fun launchFlow(activity: Activity, params: BillingFlowParams)
