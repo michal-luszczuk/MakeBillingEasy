@@ -26,9 +26,10 @@ Billing Library integration must be fun, easy and clean! **We want to enjoy the 
 ## 🚚 Download
 MakeBillingEasy is available on `mavenCentral()`.
 
+Latest release: [![MavenCentral version](https://img.shields.io/maven-central/v/com.luszczuk.makebillingeasy/core?color=%2300cc00&style=flat-square)](https://central.sonatype.dev/namespace/com.luszczuk.makebillingeasy)
 ```kotlin
 // core module
-implementation("com.luszczuk.makebillingeasy:core:0.2.0")
+implementation("com.luszczuk.makebillingeasy:core:{latestRelease}")
 ```
 
 ## 🌟 Quick Start
@@ -133,7 +134,7 @@ billingRepository.isFeatureSupported(FeatureType.IN_APP_MESSAGING)
 #### Launch the purchase flow
 >under the hood `billingClient.launchBillingFlow`
 
-Observe for the purchase updates
+Observe for the purchase updates in your activity/fragment/viewModel
 ```kotlin
 viewModelScope.launch {
     try {
@@ -145,7 +146,7 @@ viewModelScope.launch {
     }
 }
 ```
-Later start the purchase flow
+Later start the purchase flow in the activity/fragment
 ```kotlin
 billingRepository.launchFlow(activity, params)
 ```
