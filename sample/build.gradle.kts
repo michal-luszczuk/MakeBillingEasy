@@ -31,6 +31,15 @@ android {
         sourceCompatibility(Config.javaVersion)
         targetCompatibility(Config.javaVersion)
     }
+
+    kotlin {
+        jvmToolchain(Config.javaVersionNumber)
+    }
+
+    kotlinOptions {
+        jvmTarget = Config.javaVersionNumber.toString()
+    }
+
     namespace = "com.example.myapplication"
 }
 

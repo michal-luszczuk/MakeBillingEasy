@@ -21,6 +21,7 @@ import com.android.billingclient.api.queryPurchaseHistory
 import com.android.billingclient.api.queryPurchasesAsync
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.first
@@ -39,6 +40,7 @@ class EasyBillingRepository(
         return connectionFlowable
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun observePurchaseUpdates(): Flow<PurchasesUpdate> {
         return connectionFlowable.flatMapConcat {
             billingClientStorage.purchasesUpdateFlow

@@ -4,6 +4,8 @@ object Config {
     const val minSdk = 24
     const val compileSdk = 34
     const val targetSdk = 34
+
+    const val javaVersionNumber = 17
     val javaVersion = JavaVersion.VERSION_17
 }
 

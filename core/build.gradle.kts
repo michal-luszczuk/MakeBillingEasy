@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         minSdk = Config.minSdk
-        targetSdk = Config.targetSdk
+        lint.targetSdk = Config.targetSdk
     }
 
     buildTypes {
@@ -16,6 +16,20 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
     }
+
+    compileOptions {
+        sourceCompatibility(Config.javaVersion)
+        targetCompatibility(Config.javaVersion)
+    }
+
+    kotlin {
+        jvmToolchain(Config.javaVersionNumber)
+    }
+
+    kotlinOptions {
+        jvmTarget = Config.javaVersionNumber.toString()
+    }
+
     namespace = "com.luszczuk.makebillingeasy.core"
 
 }
