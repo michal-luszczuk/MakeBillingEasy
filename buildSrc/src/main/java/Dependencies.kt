@@ -9,7 +9,6 @@ object Config {
     val javaVersion = JavaVersion.VERSION_17
 }
 
-
 object Versions {
     const val junit = "4.13.2"
     const val mockk = "1.13.5"
