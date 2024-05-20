@@ -12,13 +12,13 @@ object Config {
 
 object Versions {
     const val junit = "4.13.2"
-    const val mockk = "1.13.3"
+    const val mockk = "1.13.5"
     const val kotlinVersion = "1.9.24"
     const val robolectric = "4.7.3"
     const val kluent = "1.68"
     const val dokka = "1.8.10"
     const val dagger = "2.51.1"
-    const val coroutines = "1.7.3"
+    const val coroutines = "1.8.0"
     const val lifecycle = "2.8.0"
     const val billingLib = "7.0.0"
 }
