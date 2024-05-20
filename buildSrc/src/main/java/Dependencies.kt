@@ -2,24 +2,23 @@ import org.gradle.api.JavaVersion
 
 object Config {
     const val minSdk = 24
-    const val compileSdk = 33
-    const val targetSdk = 33
-    const val buildTools = "33.0.0"
-    val javaVersion = JavaVersion.VERSION_1_8
+    const val compileSdk = 34
+    const val targetSdk = 34
+    val javaVersion = JavaVersion.VERSION_17
 }
 
 
 object Versions {
     const val junit = "4.13.2"
     const val mockk = "1.13.3"
-    const val kotlinVersion = "1.7.22"
+    const val kotlinVersion = "1.9.24"
     const val robolectric = "4.7.3"
     const val kluent = "1.68"
-    const val dokka = "1.7.20"
-    const val dagger = "2.44.2"
-    const val coroutines = "1.6.4"
-    const val lifecycle = "2.5.1"
-    const val billingLib = "5.1.0"
+    const val dokka = "1.8.10"
+    const val dagger = "2.51.1"
+    const val coroutines = "1.7.3"
+    const val lifecycle = "2.8.0"
+    const val billingLib = "7.0.0"
 }
 
 object Libs {

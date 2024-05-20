@@ -7,7 +7,7 @@ buildscript {
 
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.3.1")
+        classpath("com.android.tools.build:gradle:8.4.0")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlinVersion}")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:${Versions.dokka}")
         classpath("com.vanniktech:gradle-maven-publish-plugin:0.18.0")
@@ -17,7 +17,7 @@ buildscript {
 }
 
 plugins {
-    id("com.github.ben-manes.versions") version "0.44.0"
+    id("com.github.ben-manes.versions") version "0.46.0"
 }
 
 allprojects {
@@ -35,7 +35,7 @@ tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("
     }
 
 fun isNonStable(version: String): Boolean {
-    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
+    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
     val regex = "^[0-9,.v-]+(-r)?$".toRegex()
     val isStable = stableKeyword || regex.matches(version)
     return isStable.not()
@@ -56,7 +56,7 @@ subprojects {
         apply(plugin = "org.jetbrains.dokka")
 
         tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
-            outputDirectory.set(buildDir.resolve("javadoc"))
+            outputDirectory.set(projectDir.resolve("build/javadoc"))
         }
 
         apply(plugin = "com.vanniktech.maven.publish")
@@ -71,19 +71,19 @@ subprojects {
             dependencies {
                 "testImplementation"(Libs.mockk)
 
-                "testImplementation"("org.junit.jupiter:junit-jupiter-api:5.9.1")
-                "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:5.9.1")
-                "testImplementation"("app.cash.turbine:turbine:0.12.1")
+                "testImplementation"("org.junit.jupiter:junit-jupiter-api:5.9.2")
+                "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+                "testImplementation"("app.cash.turbine:turbine:0.12.3")
                 "testImplementation"(Libs.coroutinesTest)
                 "testImplementation"("junit:junit:4.13.2")
-                "testRuntimeOnly"("org.junit.vintage:junit-vintage-engine:5.9.1")
+                "testRuntimeOnly"("org.junit.vintage:junit-vintage-engine:5.9.2")
             }
         }
     }
 }
 
 tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
+    delete(rootProject.projectDir.resolve("build"))
 }
 
 fun Project.androidLibrary(configure: com.android.build.gradle.LibraryExtension.() -> Unit) =
