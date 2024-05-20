@@ -10,7 +10,7 @@ sealed class BillingException(
     companion object {
         fun fromResult(result: BillingResult): BillingException {
             return when (result.responseCode) {
-                BillingResponseCode.SERVICE_TIMEOUT -> ServiceTimeoutException(result)
+                BillingResponseCode.NETWORK_ERROR -> NetworkErrorException(result)
                 BillingResponseCode.FEATURE_NOT_SUPPORTED -> FeatureNotSupportedException(result)
                 BillingResponseCode.SERVICE_DISCONNECTED -> ServiceDisconnectedException(result)
                 BillingResponseCode.USER_CANCELED -> UserCanceledException(result)
@@ -27,9 +27,9 @@ sealed class BillingException(
     }
 
     /**
-     * The request has reached the maximum timeout before Google Play responds.
+     * A network error occurred during the operation.
      */
-    class ServiceTimeoutException(result: BillingResult) : BillingException(result)
+    class NetworkErrorException(result: BillingResult) : BillingException(result)
 
     /**
      * Requested feature is not supported by Play Store on the current device.
@@ -47,7 +47,7 @@ sealed class BillingException(
     class UserCanceledException(result: BillingResult) : BillingException(result)
 
     /**
-     * Network connection is down.
+     * The service is currently unavailable.
      */
     class ServiceUnavailableException(result: BillingResult) : BillingException(result)
 
