@@ -40,7 +40,7 @@ class EasyBillingRepository(
         return connectionFlowable
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @ExperimentalCoroutinesApi
     override fun observePurchaseUpdates(): Flow<PurchasesUpdate> {
         return connectionFlowable.flatMapConcat {
             billingClientStorage.purchasesUpdateFlow

@@ -31,7 +31,6 @@ android {
     }
 
     namespace = "com.luszczuk.makebillingeasy.core"
-
 }
 
 dependencies {
