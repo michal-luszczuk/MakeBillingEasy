@@ -1,6 +1,7 @@
 package com.luszczuk.makebillingeasy.factory
 
 import android.content.Context
+import android.util.Log
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingResult
@@ -8,6 +9,7 @@ import com.android.billingclient.api.PurchasesUpdatedListener
 import com.luszczuk.makebillingeasy.BillingConnectionResult
 import com.luszczuk.makebillingeasy.exception.BillingException
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
@@ -46,8 +48,13 @@ class CoroutinesBillingConnectionFactory(
         awaitClose {
             billingClient.endConnectionIfConnected()
         }
-    }.retryWhen { error, _ ->
-        error is BillingServiceDisconnectedException
+    }.retryWhen { cause, attempt ->
+        if (cause is BillingServiceDisconnectedException && attempt < 4) {
+            delay(200)
+            true
+        } else {
+            false
+        }
     }.catch { error ->
         emit(convertExceptionIntoErrorResult(error))
     }
