@@ -10,7 +10,7 @@ sealed class BillingException(
     companion object {
         fun fromResult(result: BillingResult): BillingException {
             return when (result.responseCode) {
-                BillingResponseCode.SERVICE_TIMEOUT -> ServiceTimeoutException(result)
+                BillingResponseCode.NETWORK_ERROR -> NetworkErrorException(result)
                 BillingResponseCode.FEATURE_NOT_SUPPORTED -> FeatureNotSupportedException(result)
                 BillingResponseCode.SERVICE_DISCONNECTED -> ServiceDisconnectedException(result)
                 BillingResponseCode.USER_CANCELED -> UserCanceledException(result)
@@ -27,9 +27,9 @@ sealed class BillingException(
     }
 
     /**
-     * The request has reached the maximum timeout before Google Play responds.
+     * A network error occurred during the operation.
      */
-    class ServiceTimeoutException(result: BillingResult) : BillingException(result)
+    class NetworkErrorException(result: BillingResult) : BillingException(result)
 
     /**
      * Requested feature is not supported by Play Store on the current device.
@@ -37,17 +37,19 @@ sealed class BillingException(
     class FeatureNotSupportedException(result: BillingResult) : BillingException(result)
 
     /**
-     * Play Store service is not connected now - potentially transient state.
+     * The app is not connected to the Play Store service via the Google Play Billing Library.
      */
     class ServiceDisconnectedException(result: BillingResult) : BillingException(result)
 
     /**
-     * User pressed back or canceled a dialog.
+     * Transaction was canceled by the user.
      */
     class UserCanceledException(result: BillingResult) : BillingException(result)
 
     /**
-     * Network connection is down.
+     * The service is currently unavailable.
+     * Since this state is transient, your app should automatically retry (e.g. with exponential back off) to recover from this error.
+     * Be mindful of how long you retry if the retry is happening during a user interaction.
      */
     class ServiceUnavailableException(result: BillingResult) : BillingException(result)
 

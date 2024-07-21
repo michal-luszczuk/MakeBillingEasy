@@ -196,14 +196,14 @@ class EasyBillingRepositoryTest {
 
 
     @Test
-    fun `GIVEN client query purchases history returns service timeout WHEN queryPurchaseHistory THEN timeout exception`() =
+    fun `GIVEN client query purchases history returns network error WHEN queryPurchaseHistory THEN network error exception`() =
         runTest {
             //given
             setStorageConnectionFlowToReturnFlowWithSuccess()
 
             val historyRecords = listOf<PurchaseHistoryRecord>(mockk(), mockk())
             val result = PurchaseHistoryResult(
-                billingResult = createBillingResult(BillingResponseCode.SERVICE_TIMEOUT),
+                billingResult = createBillingResult(BillingResponseCode.NETWORK_ERROR),
                 purchaseHistoryRecordList = historyRecords
             )
             val params = mockk<QueryPurchaseHistoryParams>()
@@ -216,7 +216,7 @@ class EasyBillingRepositoryTest {
 
             //then
             assertInstanceOf(
-                BillingException.ServiceTimeoutException::class.java,
+                BillingException.NetworkErrorException::class.java,
                 actualResult.exceptionOrNull()
             )
         }

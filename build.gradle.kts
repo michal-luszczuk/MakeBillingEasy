@@ -1,30 +1,12 @@
-import com.vanniktech.maven.publish.MavenPublishPluginExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
-
-buildscript {
-    repositories {
-        google()
-
-    }
-    dependencies {
-        classpath("com.android.tools.build:gradle:7.3.1")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlinVersion}")
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:${Versions.dokka}")
-        classpath("com.vanniktech:gradle-maven-publish-plugin:0.18.0")
-        classpath("de.mannodermaus.gradle.plugins:android-junit5:1.8.2.1")
-        classpath("com.google.dagger:hilt-android-gradle-plugin:${Versions.dagger}")
-    }
-}
-
 plugins {
-    id("com.github.ben-manes.versions") version "0.44.0"
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.jetbrains.kotlin.android) apply false
+    alias(libs.plugins.vanniktech.mavenpublish)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.junit5) apply false
+    alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.benmanes.versions)
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates")
@@ -35,7 +17,7 @@ tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("
     }
 
 fun isNonStable(version: String): Boolean {
-    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
+    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
     val regex = "^[0-9,.v-]+(-r)?$".toRegex()
     val isStable = stableKeyword || regex.matches(version)
     return isStable.not()
@@ -43,47 +25,22 @@ fun isNonStable(version: String): Boolean {
 
 
 subprojects {
-    apply(plugin = "kotlin-android")
-    val kotlin = project.extensions.getByName("kotlin") as KotlinAndroidProjectExtension
-    kotlin.sourceSets.all {
-        languageSettings {
-            languageVersion = "1.6"
-            progressiveMode = true
-        }
-    }
-
-    pluginManager.withPlugin("com.android.library") {
-        apply(plugin = "org.jetbrains.dokka")
-
-        tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
-            outputDirectory.set(buildDir.resolve("javadoc"))
-        }
-
-        apply(plugin = "com.vanniktech.maven.publish")
-        (project.extensions.getByName("mavenPublish") as MavenPublishPluginExtension).apply {
-            sonatypeHost = com.vanniktech.maven.publish.SonatypeHost.S01
-        }
-    }
 
     plugins.withType(com.android.build.gradle.LibraryPlugin::class) {
         apply(plugin = "de.mannodermaus.android-junit5")
         androidLibrary {
             dependencies {
-                "testImplementation"(Libs.mockk)
+                "testImplementation"(libs.mockk)
 
-                "testImplementation"("org.junit.jupiter:junit-jupiter-api:5.9.1")
-                "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:5.9.1")
-                "testImplementation"("app.cash.turbine:turbine:0.12.1")
-                "testImplementation"(Libs.coroutinesTest)
-                "testImplementation"("junit:junit:4.13.2")
-                "testRuntimeOnly"("org.junit.vintage:junit-vintage-engine:5.9.1")
+                "testImplementation"(libs.junit.jupiter.api)
+                "testRuntimeOnly"(libs.junit.jupiter.engine)
+                "testImplementation"(libs.turbine)
+                "testImplementation"(libs.coroutines.test)
+                "testImplementation"(libs.junit)
+                "testRuntimeOnly"(libs.junit.vintage.engine)
             }
         }
     }
-}
-
-tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
 }
 
 fun Project.androidLibrary(configure: com.android.build.gradle.LibraryExtension.() -> Unit) =

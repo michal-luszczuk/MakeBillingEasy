@@ -35,7 +35,7 @@ class MainViewModel @Inject constructor(
                     is BillingException.ItemNotOwnedException,
                     is BillingException.ItemUnavailableException,
                     is BillingException.ServiceDisconnectedException,
-                    is BillingException.ServiceTimeoutException,
+                    is BillingException.NetworkErrorException,
                     is BillingException.ServiceUnavailableException,
                     is BillingException.UnknownException,
                     is BillingException.UserCanceledException -> {
