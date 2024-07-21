@@ -1,16 +1,11 @@
 plugins {
-    id("com.android.application")
-    id("kotlin-kapt")
-    id("dagger.hilt.android.plugin")
+    id("makebillingeasy.android.application")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
-    buildToolsVersion = Config.buildTools
-    compileSdk = Config.compileSdk
-
     defaultConfig {
-        minSdk = Config.minSdk
-        targetSdk = Config.targetSdk
         applicationId = "com.luszczuk.makebillingseasy.sample"
         versionCode = 1
         versionName = "1.0"
@@ -28,38 +23,33 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility(Config.javaVersion)
-        targetCompatibility(Config.javaVersion)
-    }
+    namespace = "com.example.myapplication"
 }
 
 dependencies {
 
-    implementation(Libs.kotlinStdLib)
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.constraintlayout)
 
-    implementation("androidx.activity:activity-ktx:1.6.1")
-    implementation("androidx.appcompat:appcompat:1.5.1")
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-
-    implementation(Libs.billingLib)
-    implementation(Libs.lifecycleCommon)
-    implementation(Libs.lifecycleProcess)
-    implementation(Libs.lifecycleRuntime)
-    implementation(Libs.lifecycleViewModel)
+    implementation(libs.billingclient.ktx)
+    implementation(libs.lifecycle.common)
+    implementation(libs.lifecycle.process)
+    implementation(libs.lifecycle.runtime)
+    implementation(libs.lifecycle.viewmodel)
 
     implementation(project(":core"))
-    implementation(Libs.coroutinesAndroid)
-    implementation(Libs.coroutinesCore)
+    implementation(libs.coroutines.android)
+    implementation(libs.coroutines.core)
 
-    implementation(Libs.dagger)
-    kapt(Libs.daggerCompiler)
+    implementation(libs.dagger)
+    ksp(libs.dagger.compiler)
 
-    implementation(Libs.hiltAndroid)
-    kapt(Libs.hiltCompiler)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
-    testImplementation(Libs.junit)
-    androidTestImplementation("androidx.test.ext:junit:1.1.4")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.junit.ktx)
+    androidTestImplementation(libs.androidx.espresso.core)
 }

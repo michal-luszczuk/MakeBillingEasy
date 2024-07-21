@@ -3,7 +3,7 @@ package com.luszczuk.makebillingeasy.sample
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import com.example.myapplication.R
 import com.luszczuk.makebillingeasy.BillingConnector
 import com.luszczuk.makebillingeasy.lifecycle.BillingConnectionLifecycleManager
@@ -11,7 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : FragmentActivity() {
 
     @Inject
     lateinit var connector: BillingConnector
